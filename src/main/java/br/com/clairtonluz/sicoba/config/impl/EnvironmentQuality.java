@@ -5,7 +5,7 @@ import br.com.clairtonluz.sicoba.config.Environment;
 /**
  * Created by clairtonluz on 28/02/16.
  */
-public class EnvironmentQuality implements Environment {
+public class EnvironmentQuality extends Environment {
     @Override
     public String getEnv() {
         return Environment.QUALITY;

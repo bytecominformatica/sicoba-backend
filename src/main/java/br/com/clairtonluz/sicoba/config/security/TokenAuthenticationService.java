@@ -1,5 +1,6 @@
 package br.com.clairtonluz.sicoba.config.security;
 
+import br.com.clairtonluz.sicoba.config.EnvironmentFactory;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,9 +16,8 @@ import static java.util.Collections.emptyList;
  * Created by clairton on 02/06/17.
  */
 public class TokenAuthenticationService {
-//    static final long EXPIRATIONTIME = 1_800_000; // 30 minutes
-    static final long EXPIRATIONTIME = 30_000; // 30 minutes
-    static final String SECRET = "LKJSDFkjalsdkf&&@Q$*&(*&09r89eqr7we7qr78787155353";
+    static final long EXPIRATIONTIME = 3_600_000; // 1 hora
+    static final String SECRET = EnvironmentFactory.create().getJWTSecret();
     static final String TOKEN_PREFIX = "Bearer";
     static final String HEADER_STRING = "Authorization";
 

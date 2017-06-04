@@ -33,17 +33,13 @@ public class GlobalExceptionHandler {
         return new ErrorInfo(req.getRequestURI(), e);
     }
 
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(ExpiredJwtException.class)
-    @ResponseBody
-    public ErrorInfo handleExpiredJwtException(HttpServletRequest req, Exception e) {
-        return new ErrorInfo(req.getRequestURI(), e);
-    }
-
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public ErrorInfo handleException(HttpServletRequest req, Exception e) {
+        System.out.println("################################################");
+        System.out.println("################################################");
+        System.out.println("################################################");
         e.printStackTrace();
         SendEmail.notificarAdmin(e);
         return new ErrorInfo(req.getRequestURI(), e);

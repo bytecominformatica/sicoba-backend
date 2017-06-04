@@ -5,9 +5,10 @@ import br.com.clairtonluz.sicoba.config.Environment;
 /**
  * Created by clairtonluz on 28/02/16.
  */
-public class EnvironmentProduction implements Environment {
+public class EnvironmentProduction extends Environment {
     @Override
     public String getEnv() {
         return Environment.PRODUCTION;
     }
+
 }

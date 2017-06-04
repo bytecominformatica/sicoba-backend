@@ -13,6 +13,12 @@ import java.io.StringWriter;
  */
 public class SendEmail {
 
+    public static final Environment ENVIRONMENT;
+
+    static {
+        ENVIRONMENT = EnvironmentFactory.create();
+    }
+
     private SendEmail() {
 
     }
@@ -28,11 +34,11 @@ public class SendEmail {
     }
 
     public static void sendToAdmin(String subject, String content) {
-        send(System.getenv("SICOBA_EMAIL_ADMIN"), subject, content);
+        send(ENVIRONMENT.getEmailAdmin(), subject, content);
     }
 
     public static void send(String to, String subject, String content) {
-        send(System.getenv("SICOBA_EMAIL_SUPORTE"), to, subject, content);
+        send(ENVIRONMENT.getEmailSuporte(), to, subject, content);
     }
 
     public static void send(String from, String to, String subject, String content) {
@@ -46,7 +52,7 @@ public class SendEmail {
             Content content2 = new Content("text/plain", content);
             Mail mail = new Mail(emailFrom, subject, emailTo, content2);
 
-            String sendgridApiKey = System.getenv("SENDGRID_API_KEY");
+            String sendgridApiKey = ENVIRONMENT.getSendgridApiKey();
             SendGrid sg = new SendGrid(sendgridApiKey);
             Request request = new Request();
             try {
