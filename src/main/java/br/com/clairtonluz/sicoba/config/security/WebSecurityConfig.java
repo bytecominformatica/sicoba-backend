@@ -1,49 +1,40 @@
 package br.com.clairtonluz.sicoba.config.security;
 
-import br.com.clairtonluz.sicoba.filter.CsrfHeaderFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.csrf.CsrfFilter;
-import org.springframework.security.web.csrf.CsrfTokenRepository;
-import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.sql.DataSource;
 
 /**
- * Created by clairtonluz on 31/01/16.
+ * Created by clairton on 02/06/17.
  */
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
     @Autowired
     DataSource dataSource;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
-        http.httpBasic()
-                .and()
-                .authorizeRequests()
-                .antMatchers("/", "/index.html", "/app/**", "/dist/**", "/bower_components/**", "/api/gerencianet/notification").permitAll()
+        http.csrf().disable().authorizeRequests()
+                .antMatchers("/", "/api/gerencianet/notification").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/login").permitAll()
                 .anyRequest().authenticated()
-                .and().logout()
                 .and()
-                .addFilterAfter(new CsrfHeaderFilter(), CsrfFilter.class)
-                .csrf().ignoringAntMatchers("/api/gerencianet/notification")
-                .csrfTokenRepository(csrfTokenRepository())
-        ;
-
-    }
-
-    private CsrfTokenRepository csrfTokenRepository() {
-        HttpSessionCsrfTokenRepository repository = new HttpSessionCsrfTokenRepository();
-        repository.setHeaderName("X-XSRF-TOKEN");
-        return repository;
+                // We filter the api/login requests
+                .addFilterBefore(new JWTLoginFilter("/api/login", authenticationManager()),
+                        UsernamePasswordAuthenticationFilter.class)
+                // And filter other requests to check the presence of JWT in header
+                .addFilterBefore(new JWTAuthenticationFilter(),
+                        UsernamePasswordAuthenticationFilter.class);
     }
 
     @Autowired
@@ -61,4 +52,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         return encoder;
     }
+
 }
+
