@@ -1,4 +1,4 @@
-SICOBA - SISTEMA DE CONTROLE DE BANDA
+SICOBA BACKEND- SISTEMA DE CONTROLE DE BANDA
 =====================================
 
 Contact
@@ -25,16 +25,6 @@ sudo -i -u postgres
 CREATE USER bytecom WITH PASSWORD 'bytecom';
 GRANT ALL PRIVILEGES ON DATABASE bytecom to bytecom;
 \q
-```
-
-Setup project
--------------
-```shell
-cd path_to_project
-
-npm install
-bower install
-
 ```
 
 Integration SendGrid (Optional)
@@ -67,26 +57,16 @@ pass:admin
 Technologies In Use
 -------------------
 
-1. Front end
-    - AngularJS
-    - HTML5
-    - Bootstrap
-    - gulp
-    - jshint
-<br/>
-
-2. Back end
-    - JDK 8
-    - Mikrotik API
-    - Spring Boot
-    - JPA
-    - PostGreSQL
-    - Hibernate
-    - JUnit 4.12
-    - Flyway
-    - JAX-RS
-    - Gradle
+- JDK 8
+- Mikrotik API
+- Spring Boot
+- JPA
+- PostGreSQL
+- Hibernate
+- JUnit 4.12
+- Flyway
+- Gradle
 
 
 --------------------------------------------
-Copyright (C) 2013-2016, Clairton Carneiro Luz
+Copyright (C) 2013-2017, Clairton Carneiro Luz
