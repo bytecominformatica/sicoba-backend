@@ -1,5 +1,6 @@
 package br.com.clairtonluz.sicoba.config.security;
 
+import br.com.clairtonluz.sicoba.service.security.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -7,34 +8,48 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.sql.DataSource;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by clairton on 02/06/17.
  */
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+    public static final String JWT_TOKEN_HEADER_PARAM = "Authorization";
+    public static final String TOKEN_BASED_AUTH_ENTRY_POINT = "/api/**";
+    public static final String TOKEN_REFRESH_ENTRY_POINT = "/api/auth/token";
 
     @Autowired
-    DataSource dataSource;
+    private DataSource dataSource;
+    @Autowired
+    private UserService userService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests()
-                .antMatchers("/", "/api/gerencianet/notification").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/login").permitAll()
-                .anyRequest().authenticated()
+        http
+                .csrf().disable()
+                .exceptionHandling()
                 .and()
-                // We filter the api/login requests
-                .addFilterBefore(new JWTLoginFilter("/api/login", authenticationManager()),
-                        UsernamePasswordAuthenticationFilter.class)
-                // And filter other requests to check the presence of JWT in header
-                .addFilterBefore(new JWTAuthenticationFilter(),
-                        UsernamePasswordAuthenticationFilter.class);
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .addFilterBefore(new JWTLoginFilter("/api/login", HttpMethod.POST, authenticationManager(), userService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JWTAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .authorizeRequests()
+                .antMatchers("/api/login", "/api/gerencianet/**/notification").permitAll()
+                .antMatchers(HttpMethod.OPTIONS).permitAll()
+                .anyRequest()
+                .authenticated()
+        ;
     }
 
     @Autowired
@@ -49,8 +64,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        PasswordEncoder encoder = new BCryptPasswordEncoder();
-        return encoder;
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurerAdapter() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins("http://localhost:4200");
+            }
+        };
     }
 
 }

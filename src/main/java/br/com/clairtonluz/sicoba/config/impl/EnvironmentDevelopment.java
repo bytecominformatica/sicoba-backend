@@ -15,4 +15,9 @@ public class EnvironmentDevelopment extends Environment {
     public String getJWTSecret() {
         return "Your secret";
     }
+
+    @Override
+    public String getAllowOrigins() {
+        return "http://localhost:4200";
+    }
 }

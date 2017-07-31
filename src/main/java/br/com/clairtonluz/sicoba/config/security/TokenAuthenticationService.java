@@ -1,13 +1,18 @@
 package br.com.clairtonluz.sicoba.config.security;
 
-import br.com.clairtonluz.sicoba.config.EnvironmentFactory;
+import br.com.clairtonluz.sicoba.config.Constants;
+import br.com.clairtonluz.sicoba.model.pojo.UserPojo;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Date;
 
 import static java.util.Collections.emptyList;
@@ -16,27 +21,29 @@ import static java.util.Collections.emptyList;
  * Created by clairton on 02/06/17.
  */
 public class TokenAuthenticationService {
-    static final long EXPIRATIONTIME = 3_600_000; // 1 hora
-    static final String SECRET = EnvironmentFactory.create().getJWTSecret();
-    static final String TOKEN_PREFIX = "Bearer";
-    static final String HEADER_STRING = "Authorization";
 
-    static void addAuthentication(HttpServletResponse res, String username) {
+    static void addAuthentication(HttpServletResponse res, UserPojo user) {
         String JWT = Jwts.builder()
-                .setSubject(username)
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATIONTIME))
-                .signWith(SignatureAlgorithm.HS512, SECRET)
+                .setSubject(user.getUsername())
+                .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRATION_TIME))
+                .signWith(SignatureAlgorithm.HS512, Constants.JWT_SECRET)
                 .compact();
-        res.addHeader(HEADER_STRING, TOKEN_PREFIX + " " + JWT);
+
+        try {
+            user.setToken(Constants.TOKEN_AUTH_PREFIX + " " + JWT);
+            res.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE);
+            res.getWriter().write(new ObjectMapper().writeValueAsString(user));
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 
     static Authentication getAuthentication(HttpServletRequest request) {
-        String token = request.getHeader(HEADER_STRING);
-        if (token != null && token.startsWith(TOKEN_PREFIX)) {
-            // parse the token.
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (token != null && token.startsWith(Constants.TOKEN_AUTH_PREFIX)) {
             String user = Jwts.parser()
-                    .setSigningKey(SECRET)
-                    .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
+                    .setSigningKey(Constants.JWT_SECRET)
+                    .parseClaimsJws(token.replace(Constants.TOKEN_AUTH_PREFIX, ""))
                     .getBody()
                     .getSubject();
 

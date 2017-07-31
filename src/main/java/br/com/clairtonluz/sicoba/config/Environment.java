@@ -46,4 +46,10 @@ public abstract class Environment {
     public boolean isGNSandbox() {
         return Boolean.parseBoolean(System.getenv("SANDBOX"));
     }
+
+    public String getAllowOrigins() {
+        return System.getenv("ALLOW_ORIGIN");
+    }
+
+
 }
