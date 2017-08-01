@@ -46,7 +46,7 @@ public class ConsumerAPI {
         return consumerService.buscarSemTitulo();
     }
 
-    @RequestMapping(value = "/ultimos_alterados", method = RequestMethod.GET)
+    @RequestMapping(value = "/last_changed", method = RequestMethod.GET)
     public List<Consumer> getUltimosAlterados() {
         return consumerService.buscarUltimosAlterados();
     }
