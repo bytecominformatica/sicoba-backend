@@ -14,7 +14,7 @@ public interface ContratoRepository extends CrudRepository<Contrato, Integer> {
 
     List<Contrato> findByDataInstalacaoBetween(Date from, Date to);
 
-    Contrato findOptionalByCliente_id(Integer clienteId);
+    Contrato findOptionalByConsumer_id(Integer consumerId);
 
     List<Contrato> findByPlano(Plano plano);
 

@@ -4,7 +4,7 @@ import br.com.clairtonluz.sicoba.model.entity.provedor.impl.Secret;
 import br.com.clairtonluz.sicoba.service.comercial.conexao.SecretService;
 import br.com.clairtonluz.sicoba.service.provedor.Servidor;
 
-public enum StatusCliente {
+public enum StatusConsumer {
     INATIVO {
         @Override
         public void atualizarSecret(SecretService secretService, Servidor servidor, Secret secret) {

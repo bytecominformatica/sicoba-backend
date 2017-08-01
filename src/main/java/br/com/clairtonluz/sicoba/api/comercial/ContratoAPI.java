@@ -23,9 +23,9 @@ public class ContratoAPI {
         return contratoService.buscarRecentes();
     }
 
-    @RequestMapping(value = "cliente/{clienteId}", method = RequestMethod.GET)
-    public Contrato buscarPorCliente(@PathVariable Integer clienteId) {
-        return contratoService.buscarPorCliente(clienteId);
+    @RequestMapping(value = "consumer/{consumerId}", method = RequestMethod.GET)
+    public Contrato buscarPorConsumer(@PathVariable Integer consumerId) {
+        return contratoService.buscarPorConsumer(consumerId);
     }
 
     @RequestMapping(method = RequestMethod.POST)

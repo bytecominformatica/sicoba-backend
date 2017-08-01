@@ -6,7 +6,7 @@ import br.com.clairtonluz.sicoba.model.entity.comercial.Contrato;
 import br.com.clairtonluz.sicoba.model.entity.financeiro.gerencianet.charge.Charge;
 import br.com.clairtonluz.sicoba.model.entity.financeiro.gerencianet.charge.PaymentType;
 import br.com.clairtonluz.sicoba.model.entity.financeiro.gerencianet.charge.StatusCharge;
-import br.com.clairtonluz.sicoba.repository.comercial.ClienteRepository;
+import br.com.clairtonluz.sicoba.repository.comercial.ConsumerRepository;
 import br.com.clairtonluz.sicoba.repository.comercial.ContratoRepository;
 import br.com.clairtonluz.sicoba.repository.financeiro.gerencianet.ChargeRepository;
 import br.com.clairtonluz.sicoba.service.financeiro.gerencianet.GNService;
@@ -20,9 +20,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 
@@ -36,7 +34,7 @@ public class ChargeService {
     @Autowired
     private ContratoRepository contratoRepository;
     @Autowired
-    private ClienteRepository clienteRepository;
+    private ConsumerRepository consumerRepository;
     @Autowired
     private ChargeGNService chargeGNService;
 
@@ -54,7 +52,7 @@ public class ChargeService {
 
     @Transactional
     public Charge createCharge(Charge charge) {
-        Contrato contrato = contratoRepository.findOptionalByCliente_id(charge.getCliente().getId());
+        Contrato contrato = contratoRepository.findOptionalByConsumer_id(charge.getConsumer().getId());
         JSONObject createChargeResult = chargeGNService.createCharge(contrato, charge);
 
         if (createChargeResult.getInt("code") == HttpStatus.OK.value()) {
@@ -114,7 +112,7 @@ public class ChargeService {
 
         String subject = "[CHARGE] Baixa manual da cobrança " + chargeAtual.getId();
         String content = String.format("Cobrança %d do cliente %d - %s no valor de %s foi baixada manualmente com o valor de %s",
-                chargeAtual.getId(), chargeAtual.getCliente().getId(), chargeAtual.getCliente().getNome(),
+                chargeAtual.getId(), chargeAtual.getConsumer().getId(), chargeAtual.getConsumer().getName(),
                 StringUtil.formatCurrence(chargeAtual.getValue()), StringUtil.formatCurrence(chargeAtual.getPaidValue()));
 
         chargeAtual = cancelCharge(chargeAtual);
@@ -189,8 +187,8 @@ public class ChargeService {
         return chargeRepository.findOne(id);
     }
 
-    public List<Charge> findByCliente(Integer clienteId) {
-        return chargeRepository.findByCliente_idOrderByExpireAtDesc(clienteId);
+    public List<Charge> findByConsumer(Integer consumerId) {
+        return chargeRepository.findByConsumer_idOrderByExpireAtDesc(consumerId);
     }
 
     public List<Charge> findByCarnet(Integer carnetId) {
@@ -201,11 +199,11 @@ public class ChargeService {
         return chargeRepository.findOptionalByCarnet_idAndParcel(carnetId, parcel);
     }
 
-    public Charge createModelo(Integer clienteId) {
+    public Charge createModelo(Integer consumerId) {
         Charge charge = new Charge();
-        Contrato contrato = contratoRepository.findOptionalByCliente_id(clienteId);
+        Contrato contrato = contratoRepository.findOptionalByConsumer_id(consumerId);
         if (contrato != null) {
-            charge.setCliente(contrato.getCliente());
+            charge.setConsumer(contrato.getConsumer());
             charge.setExpireAt(getNextExpireAt(contrato));
             Double value = contrato.getPlano().getValor();
             if (contrato.getEquipamentoWifi() != null) {
@@ -215,11 +213,11 @@ public class ChargeService {
             charge.setValue(value);
             charge.setDescription(String.format("Internet Banda Larga %s", contrato.getPlano().getNome()));
         } else {
-            charge.setCliente(clienteRepository.findOne(clienteId));
+            charge.setConsumer(consumerRepository.findOne(consumerId));
             charge.setExpireAt(new Date());
         }
 
-        charge.setMessage(String.format("Olá, %s! \nObrigado por escolher a Bytecom Informática.", charge.getCliente().getNome()));
+        charge.setMessage(String.format("Olá, %s! \nObrigado por escolher a Bytecom Informática.", charge.getConsumer().getName()));
         charge.setStatus(StatusCharge.NEW);
 
         return charge;

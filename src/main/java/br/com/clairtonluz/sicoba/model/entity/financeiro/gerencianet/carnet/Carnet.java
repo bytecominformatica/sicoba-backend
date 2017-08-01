@@ -1,6 +1,6 @@
 package br.com.clairtonluz.sicoba.model.entity.financeiro.gerencianet.carnet;
 
-import br.com.clairtonluz.sicoba.model.entity.comercial.Cliente;
+import br.com.clairtonluz.sicoba.model.entity.comercial.Consumer;
 import br.com.clairtonluz.sicoba.model.entity.extra.BaseEntity;
 
 import javax.persistence.*;
@@ -56,7 +56,7 @@ public class Carnet extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "cliente_id")
     @NotNull
-    private Cliente cliente;
+    private Consumer consumer;
 
     @Override
     public Integer getId() {
@@ -99,12 +99,12 @@ public class Carnet extends BaseEntity {
         this.cover = cover;
     }
 
-    public Cliente getCliente() {
-        return cliente;
+    public Consumer getConsumer() {
+        return consumer;
     }
 
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
+    public void setConsumer(Consumer consumer) {
+        this.consumer = consumer;
     }
 
     public Integer getRepeats() {

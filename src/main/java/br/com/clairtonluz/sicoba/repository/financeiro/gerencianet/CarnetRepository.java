@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface CarnetRepository extends CrudRepository<Carnet, Integer> {
 
-    List<Carnet> findByCliente_id(Integer clienteId);
+    List<Carnet> findByConsumer_id(Integer consumerId);
 
     Carnet findOptionalByCarnetId(int carnetId);
 }

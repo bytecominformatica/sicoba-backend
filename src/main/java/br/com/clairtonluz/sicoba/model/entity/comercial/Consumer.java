@@ -13,24 +13,23 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "cliente")
-public class Cliente extends BaseEntity {
-
-    public static final int CNPJ_LENGTH = 14;
+public class Consumer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "cliente_id_seq")
     @SequenceGenerator(name = "cliente_id_seq", sequenceName = "cliente_id_seq")
     private Integer id;
-    @NotNull(message = "nome é obrigatório")
-    private String nome;
+    @Column(name = "nome")
+    @NotNull(message = "name é obrigatório")
+    private String name;
     private String rg;
     @Enumerated
-    private StatusCliente status;
+    private StatusConsumer status;
 
     @Column(name = "cpf_cnpj")
     private String cpfCnpj;
     @Column(name = "dt_nascimento")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date dataNascimento;
+    private Date birthday;
     @Email(message = "Email inválido")
     private String email;
     @NotNull(message = "Fone titular é obrigatório")
@@ -44,18 +43,18 @@ public class Cliente extends BaseEntity {
     @JoinColumn(name = "endereco_id")
     private Endereco endereco;
 
-    public Cliente() {
+    public Consumer() {
         this.createdAt = new Date();
         this.endereco = new Endereco();
-        this.status = StatusCliente.ATIVO;
+        this.status = StatusConsumer.ATIVO;
     }
 
-    public String getNome() {
-        return nome;
+    public String getName() {
+        return name;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome != null ? nome.toUpperCase() : nome;
+    public void setName(String name) {
+        this.name = name != null ? name.toUpperCase() : name;
     }
 
     public String getRg() {
@@ -115,19 +114,19 @@ public class Cliente extends BaseEntity {
         this.cpfCnpj = cpfCnpj != null && cpfCnpj.isEmpty() ? null : cpfCnpj;
     }
 
-    public Date getDataNascimento() {
-        return dataNascimento;
+    public Date getBirthday() {
+        return birthday;
     }
 
-    public void setDataNascimento(Date dataNascimento) {
-        this.dataNascimento = dataNascimento;
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
     }
 
-    public StatusCliente getStatus() {
+    public StatusConsumer getStatus() {
         return status;
     }
 
-    public void setStatus(StatusCliente status) {
+    public void setStatus(StatusConsumer status) {
         this.status = status;
     }
 

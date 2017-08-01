@@ -50,14 +50,14 @@ public class TituloAPI {
         return tituloService.buscarVencidos();
     }
 
-    @RequestMapping(value = "/cliente/{clienteId}/new", method = RequestMethod.GET)
-    public Titulo getNovo(@PathVariable Integer clienteId) {
-        return tituloService.getNovo(clienteId);
+    @RequestMapping(value = "/consumer/{consumerId}/new", method = RequestMethod.GET)
+    public Titulo getNovo(@PathVariable Integer consumerId) {
+        return tituloService.getNovo(consumerId);
     }
 
-    @RequestMapping(value = "cliente/{clienteId}", method = RequestMethod.GET)
-    public List<Titulo> getPorCliente(@PathVariable Integer clienteId) {
-        return tituloService.buscarPorCliente(clienteId);
+    @RequestMapping(value = "/consumer/{consumerId}", method = RequestMethod.GET)
+    public List<Titulo> getPorConsumer(@PathVariable Integer consumerId) {
+        return tituloService.buscarPorConsumer(consumerId);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)

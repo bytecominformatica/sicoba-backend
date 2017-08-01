@@ -38,8 +38,8 @@ public class Contrato extends BaseEntity {
 
     @JoinColumn(name = "cliente_id", referencedColumnName = "id")
     @OneToOne
-    @NotNull(message = "cliente é obrigatório")
-    private Cliente cliente;
+    @NotNull(message = "consumer é obrigatório")
+    private Consumer consumer;
 
     public short getVencimento() {
         return vencimento;
@@ -81,12 +81,12 @@ public class Contrato extends BaseEntity {
         this.plano = plano;
     }
 
-    public Cliente getCliente() {
-        return cliente;
+    public Consumer getConsumer() {
+        return consumer;
     }
 
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
+    public void setConsumer(Consumer consumer) {
+        this.consumer = consumer;
     }
 
     @Override

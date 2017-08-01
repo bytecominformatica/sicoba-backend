@@ -1,11 +1,11 @@
 package br.com.clairtonluz.sicoba.model.entity.provedor.impl;
 
-import br.com.clairtonluz.sicoba.model.entity.provedor.IConnectionClienteCertified;
+import br.com.clairtonluz.sicoba.model.entity.provedor.IConnectionClientCertified;
 
 /**
  * Created by clairtonluz on 25/11/15.
  */
-public class Secret implements IConnectionClienteCertified {
+public class Secret implements IConnectionClientCertified {
 
     private String login;
     private String pass;

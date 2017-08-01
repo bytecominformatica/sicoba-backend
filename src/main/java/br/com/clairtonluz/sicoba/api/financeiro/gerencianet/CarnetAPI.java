@@ -28,13 +28,13 @@ public class CarnetAPI {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<Carnet> findByCliente(@RequestParam(value = "clienteId") Integer clienteId) {
-        return carnetService.findByCliente(clienteId);
+    public List<Carnet> findByConsumer(@RequestParam(value = "consumerId") Integer consumerId) {
+        return carnetService.findByConsumer(consumerId);
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
-    public Carnet modelo(@RequestParam("clienteId") Integer clienteId) {
-        return carnetService.createModelo(clienteId);
+    public Carnet modelo(@RequestParam("consumerId") Integer consumerId) {
+        return carnetService.createModelo(consumerId);
     }
 
     @RequestMapping(method = RequestMethod.POST)

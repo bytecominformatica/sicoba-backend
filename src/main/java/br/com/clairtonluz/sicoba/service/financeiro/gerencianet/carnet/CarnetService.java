@@ -6,7 +6,7 @@ import br.com.clairtonluz.sicoba.model.entity.financeiro.gerencianet.carnet.Carn
 import br.com.clairtonluz.sicoba.model.entity.financeiro.gerencianet.carnet.StatusCarnet;
 import br.com.clairtonluz.sicoba.model.entity.financeiro.gerencianet.charge.Charge;
 import br.com.clairtonluz.sicoba.model.entity.financeiro.gerencianet.charge.StatusCharge;
-import br.com.clairtonluz.sicoba.repository.comercial.ClienteRepository;
+import br.com.clairtonluz.sicoba.repository.comercial.ConsumerRepository;
 import br.com.clairtonluz.sicoba.repository.comercial.ContratoRepository;
 import br.com.clairtonluz.sicoba.repository.financeiro.gerencianet.CarnetRepository;
 import br.com.clairtonluz.sicoba.repository.financeiro.gerencianet.ChargeRepository;
@@ -39,7 +39,7 @@ public class CarnetService {
     @Autowired
     private ContratoRepository contratoRepository;
     @Autowired
-    private ClienteRepository clienteRepository;
+    private ConsumerRepository consumerRepository;
 
     @Transactional
     public Carnet createCarnet(Carnet carnet) {
@@ -70,7 +70,7 @@ public class CarnetService {
                 charge.setParcel(it.getInt("parcel"));
                 charge.setDiscount(carnet.getDiscountSplit());
                 charge.setDescription(carnet.getDescription());
-                charge.setCliente(carnet.getCliente());
+                charge.setConsumer(carnet.getConsumer());
 
                 charges.add(charge);
             }
@@ -149,15 +149,15 @@ public class CarnetService {
         return carnetRepository.findOne(id);
     }
 
-    public List<Carnet> findByCliente(Integer clienteId) {
-        return carnetRepository.findByCliente_id(clienteId);
+    public List<Carnet> findByConsumer(Integer consumerId) {
+        return carnetRepository.findByConsumer_id(consumerId);
     }
 
-    public Carnet createModelo(Integer clienteId) {
+    public Carnet createModelo(Integer consumerId) {
         Carnet carnet = new Carnet();
-        Contrato contrato = contratoRepository.findOptionalByCliente_id(clienteId);
+        Contrato contrato = contratoRepository.findOptionalByConsumer_id(consumerId);
         if (contrato != null) {
-            carnet.setCliente(contrato.getCliente());
+            carnet.setConsumer(contrato.getConsumer());
             carnet.setFirstPay(ChargeService.getNextExpireAt(contrato));
             Double value = contrato.getPlano().getValor();
             if (contrato.getEquipamentoWifi() != null) {
@@ -167,11 +167,11 @@ public class CarnetService {
             carnet.setValue(value);
             carnet.setDescription(String.format("Internet Banda Larga %s", contrato.getPlano().getNome()));
         } else {
-            carnet.setCliente(clienteRepository.findOne(clienteId));
+            carnet.setConsumer(consumerRepository.findOne(consumerId));
             carnet.setFirstPay(new Date());
         }
 
-        carnet.setMessage(String.format("Olá, %s! \nObrigado por escolher a Bytecom Informática.", carnet.getCliente().getNome()));
+        carnet.setMessage(String.format("Olá, %s! \nObrigado por escolher a Bytecom Informática.", carnet.getConsumer().getName()));
         carnet.setStatus(StatusCarnet.ACTIVE);
         carnet.setRepeats(12);
         carnet.setSplitItems(false);

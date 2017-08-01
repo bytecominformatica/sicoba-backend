@@ -1,6 +1,6 @@
 package br.com.clairtonluz.sicoba.api.comercial;
 
-import br.com.clairtonluz.sicoba.model.entity.comercial.Cliente;
+import br.com.clairtonluz.sicoba.model.entity.comercial.Consumer;
 import br.com.clairtonluz.sicoba.model.entity.comercial.Conexao;
 import br.com.clairtonluz.sicoba.service.comercial.conexao.ConexaoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +25,11 @@ public class ConexaoAPI {
         conexaoService.atualizarTodos();
     }
 
-    @RequestMapping(value = "/cliente/{id}", method = RequestMethod.GET)
-    public Conexao getPorCliente(@PathVariable Integer id) {
-        Cliente cliente = new Cliente();
-        cliente.setId(id);
-        return conexaoService.buscarOptionalPorCliente(cliente);
+    @RequestMapping(value = "/consumer/{id}", method = RequestMethod.GET)
+    public Conexao getPorConsumer(@PathVariable Integer id) {
+        Consumer consumer = new Consumer();
+        consumer.setId(id);
+        return conexaoService.buscarOptionalPorConsumer(consumer);
     }
 
     @RequestMapping(value = "/ip/{ip}", method = RequestMethod.GET)

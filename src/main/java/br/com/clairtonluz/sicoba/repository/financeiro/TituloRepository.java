@@ -1,7 +1,7 @@
 package br.com.clairtonluz.sicoba.repository.financeiro;
 
-import br.com.clairtonluz.sicoba.model.entity.comercial.Cliente;
-import br.com.clairtonluz.sicoba.model.entity.comercial.StatusCliente;
+import br.com.clairtonluz.sicoba.model.entity.comercial.Consumer;
+import br.com.clairtonluz.sicoba.model.entity.comercial.StatusConsumer;
 import br.com.clairtonluz.sicoba.model.entity.financeiro.StatusTitulo;
 import br.com.clairtonluz.sicoba.model.entity.financeiro.Titulo;
 import org.springframework.data.repository.CrudRepository;
@@ -17,11 +17,11 @@ import java.util.List;
 @Repository
 public interface TituloRepository extends CrudRepository<Titulo, Integer> {
 
-    List<Titulo> findByCliente_idOrderByDataVencimentoDesc(Integer clienteId);
+    List<Titulo> findByConsumer_idOrderByDataVencimentoDesc(Integer consumerId);
 
     List<Titulo> findByNumeroBoletoBetween(Integer inicio, Integer fim);
 
-    List<Titulo> findByStatusAndDataVencimentoLessThanAndCliente_statusNotOrderByDataVencimentoAsc(StatusTitulo statusTitulo, Date date, StatusCliente statusCliente);
+    List<Titulo> findByStatusAndDataVencimentoLessThanAndConsumer_statusNotOrderByDataVencimentoAsc(StatusTitulo statusTitulo, Date date, StatusConsumer statusConsumer);
 
     Titulo findOptionalByNumeroBoleto(Integer numeroBoleto);
 
@@ -33,7 +33,5 @@ public interface TituloRepository extends CrudRepository<Titulo, Integer> {
 
     List<Titulo> findByDataVencimentoBetweenAndStatus(Date inicio, Date fim, StatusTitulo status);
 
-    List<Titulo> findByClienteAndStatusAndDataVencimentoGreaterThan(Cliente cliente, StatusTitulo status, Date date);
-
-    List<Titulo> findByIdIn(List<Integer> ids);
+    List<Titulo> findByConsumerAndStatusAndDataVencimentoGreaterThan(Consumer consumer, StatusTitulo status, Date date);
 }

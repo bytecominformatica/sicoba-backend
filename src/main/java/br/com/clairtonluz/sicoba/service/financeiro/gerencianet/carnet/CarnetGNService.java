@@ -31,7 +31,7 @@ class CarnetGNService {
 
     JSONObject createCarnet(Carnet carnet) {
         JSONArray items = new JSONArray().put(GNService.createItem(carnet.getDescription(), carnet.getValue()));
-        JSONObject customer = GNService.createConsumer(carnet.getCliente(), false);
+        JSONObject customer = GNService.createConsumer(carnet.getConsumer(), false);
 
 //        JSONArray instructions = GNService.createInstructions(carnet);
         JSONObject configurations = GNService.createConfigurations();
@@ -98,22 +98,22 @@ class CarnetGNService {
     }
 
     boolean resendCarnet(Carnet carnet) {
-        if (StringUtil.isEmpty(carnet.getCliente().getEmail())) {
-            throw new ConflitException("Cliente não possui email");
+        if (StringUtil.isEmpty(carnet.getConsumer().getEmail())) {
+            throw new ConflitException("Consumer não possui email");
         }
 
         Map<String, String> params = new HashMap<>();
         params.put("id", carnet.getCarnetId().toString());
 
         JSONObject body = new JSONObject();
-        body.put("email", carnet.getCliente().getEmail());
+        body.put("email", carnet.getConsumer().getEmail());
 
         return GNService.isOk(GNService.call(RESEND_CARNET, params, body));
     }
 
     boolean resendParcel(Charge charge) {
-        if (StringUtil.isEmpty(charge.getCliente().getEmail())) {
-            throw new ConflitException("Cliente não possui email");
+        if (StringUtil.isEmpty(charge.getConsumer().getEmail())) {
+            throw new ConflitException("Consumer não possui email");
         }
 
         Map<String, String> params = new HashMap<>();
@@ -121,7 +121,7 @@ class CarnetGNService {
         params.put("parcel", charge.getParcel().toString());
 
         JSONObject body = new JSONObject();
-        body.put("email", charge.getCliente().getEmail());
+        body.put("email", charge.getConsumer().getEmail());
 
         return GNService.isOk(GNService.call(RESEND_PARCEL, params, body));
     }

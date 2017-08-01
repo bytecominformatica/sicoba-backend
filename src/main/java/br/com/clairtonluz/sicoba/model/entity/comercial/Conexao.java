@@ -17,7 +17,7 @@ public class Conexao extends BaseEntity {
     private Integer id;
     @OneToOne
     @JoinColumn(name = "cliente_id")
-    private Cliente cliente;
+    private Consumer consumer;
 
     @ManyToOne
     @JoinColumn(name = "mikrotik_id")
@@ -34,7 +34,7 @@ public class Conexao extends BaseEntity {
     private String ip;
 
     public Secret createSecret(Plano plano) {
-        boolean disabled = cliente.getStatus() != StatusCliente.ATIVO;
+        boolean disabled = consumer.getStatus() != StatusConsumer.ATIVO;
         return new Secret(nome, senha, ip, plano.getNome(), disabled);
     }
 
@@ -54,12 +54,12 @@ public class Conexao extends BaseEntity {
         this.senha = senha;
     }
 
-    public Cliente getCliente() {
-        return cliente;
+    public Consumer getConsumer() {
+        return consumer;
     }
 
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
+    public void setConsumer(Consumer consumer) {
+        this.consumer = consumer;
     }
 
     public Mikrotik getMikrotik() {

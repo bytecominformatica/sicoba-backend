@@ -59,7 +59,7 @@ class ChargeGNService {
         Map<String, String> params = new HashMap<>();
         params.put("id", charge.getChargeId().toString());
 
-        JSONObject customer = GNService.createConsumer(charge.getCliente(), false);
+        JSONObject customer = GNService.createConsumer(charge.getConsumer(), false);
 //        JSONArray instructions = GNService.createInstructions(charge);
         JSONObject configurations = GNService.createConfigurations();
         System.out.println(charge.getDiscount());
@@ -174,15 +174,15 @@ class ChargeGNService {
      * @return
      */
     boolean resendBillet(Charge charge) {
-        if (StringUtil.isEmpty(charge.getCliente().getEmail())) {
-            throw new ConflitException("Cliente não possui email");
+        if (StringUtil.isEmpty(charge.getConsumer().getEmail())) {
+            throw new ConflitException("Consumer não possui email");
         }
 
         Map<String, String> params = new HashMap<>();
         params.put("id", charge.getChargeId().toString());
 
         JSONObject body = new JSONObject();
-        body.put("email", charge.getCliente().getEmail());
+        body.put("email", charge.getConsumer().getEmail());
 
         return GNService.isOk(GNService.call(RESEND_BILLET, params, body));
     }

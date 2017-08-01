@@ -19,7 +19,7 @@ public interface ChargeRepository extends CrudRepository<Charge, Integer> {
 
     List<Charge> findByCarnet_idOrderByExpireAtDesc(Integer id);
 
-    List<Charge> findByCliente_idOrderByExpireAtDesc(Integer clienteId);
+    List<Charge> findByConsumer_idOrderByExpireAtDesc(Integer consumerId);
 
     Charge findOptionalByCarnet_idAndParcel(Integer carnetId, Integer parcel);
 
@@ -29,6 +29,6 @@ public interface ChargeRepository extends CrudRepository<Charge, Integer> {
 
     List<Charge> findByCarnetIsNullAndStatusNot(StatusCharge paid);
 
-    @Query("select c from Charge c where c.expireAt < :date and c.status <> 'PAID' and c.status <> 'CANCELED' and c.cliente.status <> 2 order by c.expireAt asc ")
+    @Query("select c from Charge c where c.expireAt < :date and c.status <> 'PAID' and c.status <> 'CANCELED' and c.consumer.status <> 2 order by c.expireAt asc ")
     List<Charge> overdue(@Param("date") Date date);
 }

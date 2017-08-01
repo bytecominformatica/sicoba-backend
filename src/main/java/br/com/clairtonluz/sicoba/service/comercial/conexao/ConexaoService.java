@@ -1,10 +1,10 @@
 package br.com.clairtonluz.sicoba.service.comercial.conexao;
 
 import br.com.clairtonluz.sicoba.exception.ConflitException;
-import br.com.clairtonluz.sicoba.model.entity.comercial.Cliente;
+import br.com.clairtonluz.sicoba.model.entity.comercial.Consumer;
 import br.com.clairtonluz.sicoba.model.entity.comercial.Conexao;
 import br.com.clairtonluz.sicoba.model.entity.comercial.Plano;
-import br.com.clairtonluz.sicoba.model.entity.comercial.StatusCliente;
+import br.com.clairtonluz.sicoba.model.entity.comercial.StatusConsumer;
 import br.com.clairtonluz.sicoba.model.entity.provedor.impl.Mikrotik;
 import br.com.clairtonluz.sicoba.model.entity.provedor.impl.Secret;
 import br.com.clairtonluz.sicoba.repository.comercial.ConexaoRepository;
@@ -39,8 +39,8 @@ public class ConexaoService {
     }
 
     @Transactional
-    public Conexao buscarOptionalPorCliente(Cliente cliente) {
-        return conexaoRepository.findOptionalByCliente(cliente);
+    public Conexao buscarOptionalPorConsumer(Consumer consumer) {
+        return conexaoRepository.findOptionalByConsumer(consumer);
     }
 
     @Async
@@ -55,7 +55,7 @@ public class ConexaoService {
             try (ApiConnection con = servidor.connect(mikrotik.getHost(), mikrotik.getPort(), mikrotik.getLogin(), mikrotik.getPass())) {
                 for (Conexao c : conexoes) {
                     Secret secret = c.createSecret(planos.get(c.getId()));
-                    c.getCliente().getStatus().atualizarSecret(secretService, servidor, secret);
+                    c.getConsumer().getStatus().atualizarSecret(secretService, servidor, secret);
                 }
             }
         }
@@ -85,9 +85,9 @@ public class ConexaoService {
                 c.setIp(buscarIpLivre());
             }
 
-            Plano plano = contratoRepository.findOptionalByCliente_id(c.getCliente().getId()).getPlano();
+            Plano plano = contratoRepository.findOptionalByConsumer_id(c.getConsumer().getId()).getPlano();
             planos.put(c.getId(), plano);
-            if (c.getCliente().getStatus() == StatusCliente.CANCELADO) {
+            if (c.getConsumer().getStatus() == StatusConsumer.CANCELADO) {
                 conexaoRepository.delete(c);
             }
         }
@@ -97,10 +97,10 @@ public class ConexaoService {
     @Transactional
     public Conexao save(Conexao conexao) {
         if (isDisponivel(conexao)) {
-            Plano plano = contratoRepository.findOptionalByCliente_id(conexao.getCliente().getId()).getPlano();
+            Plano plano = contratoRepository.findOptionalByConsumer_id(conexao.getConsumer().getId()).getPlano();
             atualizarNoServidor(conexao, plano);
 
-            if (conexao.getCliente().getStatus() == StatusCliente.CANCELADO) {
+            if (conexao.getConsumer().getStatus() == StatusConsumer.CANCELADO) {
                 conexaoRepository.delete(conexao);
             } else {
                 conexaoRepository.save(conexao);
@@ -116,7 +116,7 @@ public class ConexaoService {
 
         Mikrotik mikrotik = conexao.getMikrotik();
         try (ApiConnection con = servidor.connect(mikrotik.getHost(), mikrotik.getPort(), mikrotik.getLogin(), mikrotik.getPass())) {
-            conexao.getCliente().getStatus().atualizarSecret(secretService, servidor, secret);
+            conexao.getConsumer().getStatus().atualizarSecret(secretService, servidor, secret);
         } catch (ApiConnectionException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -130,7 +130,7 @@ public class ConexaoService {
     @Transactional
     public void remove(Integer id) throws Exception {
         Conexao c = conexaoRepository.findOne(id);
-        Plano plano = contratoRepository.findOptionalByCliente_id(c.getCliente().getId()).getPlano();
+        Plano plano = contratoRepository.findOptionalByConsumer_id(c.getConsumer().getId()).getPlano();
 
         Secret secret = c.createSecret(plano);
         Mikrotik mikrotik = c.getMikrotik();

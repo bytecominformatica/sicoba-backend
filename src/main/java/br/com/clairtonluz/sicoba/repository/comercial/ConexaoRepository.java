@@ -1,11 +1,9 @@
 package br.com.clairtonluz.sicoba.repository.comercial;
 
-import br.com.clairtonluz.sicoba.model.entity.comercial.Cliente;
+import br.com.clairtonluz.sicoba.model.entity.comercial.Consumer;
 import br.com.clairtonluz.sicoba.model.entity.comercial.Conexao;
-import br.com.clairtonluz.sicoba.model.entity.comercial.StatusCliente;
 import org.springframework.data.repository.CrudRepository;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -14,7 +12,7 @@ import java.util.List;
 
 public interface ConexaoRepository extends CrudRepository<Conexao, Integer> {
 
-    Conexao findOptionalByCliente(Cliente cliente);
+    Conexao findOptionalByConsumer(Consumer consumer);
 
     Conexao findOptionalByNome(String nome);
 

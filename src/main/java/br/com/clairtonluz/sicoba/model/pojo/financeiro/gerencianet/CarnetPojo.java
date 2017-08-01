@@ -7,7 +7,7 @@ import java.util.Date;
  */
 public class CarnetPojo {
 
-    private Integer clienteId;
+    private Integer consumerId;
     private Integer quantidadeParcela;
     private Double valor;
     private Double desconto;
@@ -17,12 +17,12 @@ public class CarnetPojo {
         this.desconto = 0d;
     }
 
-    public Integer getClienteId() {
-        return clienteId;
+    public Integer getConsumerId() {
+        return consumerId;
     }
 
-    public void setClienteId(Integer clienteId) {
-        this.clienteId = clienteId;
+    public void setConsumerId(Integer consumerId) {
+        this.consumerId = consumerId;
     }
 
     public Integer getQuantidadeParcela() {

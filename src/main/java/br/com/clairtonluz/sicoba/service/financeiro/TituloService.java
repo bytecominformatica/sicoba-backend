@@ -1,14 +1,14 @@
 package br.com.clairtonluz.sicoba.service.financeiro;
 
 import br.com.clairtonluz.sicoba.exception.ConflitException;
-import br.com.clairtonluz.sicoba.model.entity.comercial.Cliente;
+import br.com.clairtonluz.sicoba.model.entity.comercial.Consumer;
 import br.com.clairtonluz.sicoba.model.entity.comercial.Contrato;
-import br.com.clairtonluz.sicoba.model.entity.comercial.StatusCliente;
+import br.com.clairtonluz.sicoba.model.entity.comercial.StatusConsumer;
 import br.com.clairtonluz.sicoba.model.entity.financeiro.StatusTitulo;
 import br.com.clairtonluz.sicoba.model.entity.financeiro.Titulo;
 import br.com.clairtonluz.sicoba.model.pojo.financeiro.Carne;
 import br.com.clairtonluz.sicoba.model.pojo.financeiro.gerencianet.CarnetPojo;
-import br.com.clairtonluz.sicoba.repository.comercial.ClienteRepository;
+import br.com.clairtonluz.sicoba.repository.comercial.ConsumerRepository;
 import br.com.clairtonluz.sicoba.repository.comercial.ContratoRepository;
 import br.com.clairtonluz.sicoba.repository.financeiro.CedenteRepository;
 import br.com.clairtonluz.sicoba.repository.financeiro.TituloRepository;
@@ -32,16 +32,16 @@ public class TituloService {
     @Autowired
     private ContratoRepository contratoRepository;
     @Autowired
-    private ClienteRepository clienteRepository;
+    private ConsumerRepository consumerRepository;
 
-    public Titulo getNovo(Integer clienteId) {
-        Contrato contrato = contratoRepository.findOptionalByCliente_id(clienteId);
+    public Titulo getNovo(Integer consumerId) {
+        Contrato contrato = contratoRepository.findOptionalByConsumer_id(consumerId);
         Date vencimento = DateUtil.toDate(LocalDate.now().plusMonths(1).withDayOfMonth(contrato.getVencimento()));
-        return getNovo(contrato.getCliente(), vencimento);
+        return getNovo(contrato.getConsumer(), vencimento);
     }
 
-    private Titulo getNovo(Cliente cliente, Date vencimento) {
-        Contrato contrato = contratoRepository.findOptionalByCliente_id(cliente.getId());
+    private Titulo getNovo(Consumer consumer, Date vencimento) {
+        Contrato contrato = contratoRepository.findOptionalByConsumer_id(consumer.getId());
 
         Titulo m = new Titulo();
         m.setDataVencimento(vencimento);
@@ -51,7 +51,7 @@ public class TituloService {
             m.setDesconto(5);
         }
         m.setValor(valorTitulo);
-        m.setCliente(cliente);
+        m.setConsumer(consumer);
 
         return m;
     }
@@ -60,13 +60,13 @@ public class TituloService {
         return tituloRepository.findByNumeroBoletoBetween(inicio, fim);
     }
 
-    public List<Titulo> buscarPorCliente(Integer clienteId) {
-        return tituloRepository.findByCliente_idOrderByDataVencimentoDesc(clienteId);
+    public List<Titulo> buscarPorConsumer(Integer consumerId) {
+        return tituloRepository.findByConsumer_idOrderByDataVencimentoDesc(consumerId);
     }
 
     public List<Titulo> buscarVencidos() {
         return tituloRepository
-                .findByStatusAndDataVencimentoLessThanAndCliente_statusNotOrderByDataVencimentoAsc(StatusTitulo.PENDENTE, new Date(), StatusCliente.CANCELADO);
+                .findByStatusAndDataVencimentoLessThanAndConsumer_statusNotOrderByDataVencimentoAsc(StatusTitulo.PENDENTE, new Date(), StatusConsumer.CANCELADO);
     }
 
     @Transactional
@@ -122,17 +122,17 @@ public class TituloService {
         if (titulosNaoRegistrado(carne.getModalidade(), carne.getBoletoInicio(), carne.getBoletoFim())) {
 
             Date data = carne.getDataInicio();
-            Cliente cliente = clienteRepository.findOne(carne.getClienteId());
+            Consumer consumer = consumerRepository.findOne(carne.getConsumerId());
 
             if (carne.getBoletoInicio() < carne.getBoletoFim()) {
                 for (int i = carne.getBoletoInicio(); i <= carne.getBoletoFim(); i++) {
-                    Titulo titulo = criarTitulo(cliente, data, carne.getModalidade(), i, carne.getValor(), carne.getDesconto());
+                    Titulo titulo = criarTitulo(consumer, data, carne.getModalidade(), i, carne.getValor(), carne.getDesconto());
                     data = DateUtil.plusMonth(data, 1);
                     titulos.add(titulo);
                 }
             } else {
                 for (int i = carne.getBoletoInicio(); i >= carne.getBoletoFim(); i--) {
-                    Titulo titulo = criarTitulo(cliente, data, carne.getModalidade(), i, carne.getValor(), carne.getDesconto());
+                    Titulo titulo = criarTitulo(consumer, data, carne.getModalidade(), i, carne.getValor(), carne.getDesconto());
                     data = DateUtil.plusMonth(data, 1);
                     titulos.add(titulo);
                 }
@@ -145,12 +145,12 @@ public class TituloService {
 
     public List<Titulo> criarTitulos(CarnetPojo carnetPojo) {
         List<Titulo> titulos = new ArrayList<>();
-        Cliente cliente = clienteRepository.findOne(carnetPojo.getClienteId());
+        Consumer consumer = consumerRepository.findOne(carnetPojo.getConsumerId());
 
         LocalDate vencimento = DateUtil.toLocalDateTime(carnetPojo.getDataInicio()).toLocalDate();
         for (int i = 1; i <= carnetPojo.getQuantidadeParcela(); i++) {
             Titulo titulo = new Titulo();
-            titulo.setCliente(cliente);
+            titulo.setConsumer(consumer);
             titulo.setValor(carnetPojo.getValor());
             titulo.setDesconto(carnetPojo.getDesconto());
             titulo.setDataVencimento(DateUtil.toDate(vencimento));
@@ -166,9 +166,9 @@ public class TituloService {
 
     }
 
-    private Titulo criarTitulo(Cliente cliente, Date c, Integer modalidade, Integer numeroBoleto,
+    private Titulo criarTitulo(Consumer consumer, Date c, Integer modalidade, Integer numeroBoleto,
                                Double valor, Double desconto) {
-        Titulo titulo = getNovo(cliente, c);
+        Titulo titulo = getNovo(consumer, c);
         titulo.setModalidade(modalidade);
         titulo.setNumeroBoleto(numeroBoleto);
         titulo.setDesconto(desconto);
@@ -219,8 +219,8 @@ public class TituloService {
         }
     }
 
-    public List<Titulo> buscarNaoVencidosPorCliente(Cliente cliente) {
-        return tituloRepository.findByClienteAndStatusAndDataVencimentoGreaterThan(cliente, StatusTitulo.PENDENTE, new Date());
+    public List<Titulo> buscarNaoVencidosPorConsumer(Consumer consumer) {
+        return tituloRepository.findByConsumerAndStatusAndDataVencimentoGreaterThan(consumer, StatusTitulo.PENDENTE, new Date());
     }
 
     public byte[] criarBoletos(List<Integer> titulos) {

@@ -1,7 +1,7 @@
 package br.com.clairtonluz.sicoba.model.entity.financeiro.gerencianet.charge;
 
 
-import br.com.clairtonluz.sicoba.model.entity.comercial.Cliente;
+import br.com.clairtonluz.sicoba.model.entity.comercial.Consumer;
 import br.com.clairtonluz.sicoba.model.entity.extra.BaseEntity;
 import br.com.clairtonluz.sicoba.model.entity.financeiro.gerencianet.carnet.Carnet;
 import br.com.clairtonluz.sicoba.util.DateUtil;
@@ -71,7 +71,7 @@ public class Charge extends BaseEntity {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "cliente_id")
-    private Cliente cliente;
+    private Consumer consumer;
     @ManyToOne
     @JoinColumn(name = "carnet_id")
     private Carnet carnet;
@@ -213,12 +213,12 @@ public class Charge extends BaseEntity {
         this.payment = payment;
     }
 
-    public Cliente getCliente() {
-        return cliente;
+    public Consumer getConsumer() {
+        return consumer;
     }
 
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
+    public void setConsumer(Consumer consumer) {
+        this.consumer = consumer;
     }
 
     public Carnet getCarnet() {

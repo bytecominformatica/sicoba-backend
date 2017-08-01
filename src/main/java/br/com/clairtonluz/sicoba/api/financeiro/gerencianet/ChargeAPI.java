@@ -2,7 +2,6 @@ package br.com.clairtonluz.sicoba.api.financeiro.gerencianet;
 
 import br.com.clairtonluz.sicoba.model.entity.financeiro.gerencianet.charge.Charge;
 import br.com.clairtonluz.sicoba.service.financeiro.gerencianet.charge.ChargeService;
-import br.com.clairtonluz.sicoba.util.SendEmail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,12 +19,12 @@ public class ChargeAPI {
     private ChargeService chargeService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<Charge> findByClienteOrCarnet(@RequestParam("clienteId") Integer clienteId,
-                                              @RequestParam(value = "carnetId", required = false) Integer carnetId) {
+    public List<Charge> findByConsumerOrCarnet(@RequestParam("consumerId") Integer consumerId,
+                                               @RequestParam(value = "carnetId", required = false) Integer carnetId) {
         if (carnetId != null) {
             return chargeService.findByCarnet(carnetId);
         } else {
-            return chargeService.findByCliente(clienteId);
+            return chargeService.findByConsumer(consumerId);
         }
     }
 
@@ -35,8 +34,8 @@ public class ChargeAPI {
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
-    public Charge modelo(@RequestParam("clienteId") Integer clienteId) {
-        return chargeService.createModelo(clienteId);
+    public Charge modelo(@RequestParam("consumerId") Integer consumerId) {
+        return chargeService.createModelo(consumerId);
     }
 
     @RequestMapping(value = "/overdue", method = RequestMethod.GET)

@@ -1,9 +1,9 @@
 package br.com.clairtonluz.sicoba.service.financeiro;
 
 import br.com.clairtonluz.sicoba.exception.ConflitException;
-import br.com.clairtonluz.sicoba.model.entity.comercial.Cliente;
+import br.com.clairtonluz.sicoba.model.entity.comercial.Consumer;
 import br.com.clairtonluz.sicoba.model.entity.comercial.Conexao;
-import br.com.clairtonluz.sicoba.model.entity.comercial.StatusCliente;
+import br.com.clairtonluz.sicoba.model.entity.comercial.StatusConsumer;
 import br.com.clairtonluz.sicoba.model.entity.financeiro.StatusTitulo;
 import br.com.clairtonluz.sicoba.model.entity.financeiro.Titulo;
 import br.com.clairtonluz.sicoba.model.entity.financeiro.edi.retorno.Header;
@@ -11,7 +11,7 @@ import br.com.clairtonluz.sicoba.model.entity.financeiro.edi.retorno.HeaderLote;
 import br.com.clairtonluz.sicoba.model.entity.financeiro.edi.retorno.Registro;
 import br.com.clairtonluz.sicoba.model.pojo.financeiro.RetornoPojo;
 import br.com.clairtonluz.sicoba.parse.ParseRetornoCaixa;
-import br.com.clairtonluz.sicoba.repository.comercial.ClienteRepository;
+import br.com.clairtonluz.sicoba.repository.comercial.ConsumerRepository;
 import br.com.clairtonluz.sicoba.repository.comercial.ContratoRepository;
 import br.com.clairtonluz.sicoba.repository.financeiro.HeaderRepository;
 import br.com.clairtonluz.sicoba.service.comercial.conexao.ConexaoService;
@@ -36,7 +36,7 @@ public class RetornoCaixaService {
     @Autowired
     private HeaderRepository headerRepository;
     @Autowired
-    private ClienteRepository clienteRepository;
+    private ConsumerRepository consumerRepository;
     @Autowired
     private ContratoRepository contratoRepository;
     @Autowired
@@ -96,12 +96,12 @@ public class RetornoCaixaService {
             m.setDataOcorrencia(r.getRegistroDetalhe().getDataOcorrencia());
             tituloService.save(m);
 
-            if (m.getCliente().getStatus().equals(StatusCliente.INATIVO)) {
-                m.getCliente().setStatus(StatusCliente.ATIVO);
+            if (m.getConsumer().getStatus().equals(StatusConsumer.INATIVO)) {
+                m.getConsumer().setStatus(StatusConsumer.ATIVO);
 
-                Cliente cliente = m.getCliente();
-                Conexao conexao = conexaoService.buscarOptionalPorCliente(cliente);
-                clienteRepository.save(m.getCliente());
+                Consumer consumer = m.getConsumer();
+                Conexao conexao = conexaoService.buscarOptionalPorConsumer(consumer);
+                consumerRepository.save(m.getConsumer());
                 if (conexao != null)
                     conexaoService.save(conexao);
             }
@@ -111,10 +111,10 @@ public class RetornoCaixaService {
 
     private Titulo criarTituloRegistrada(Registro r) {
         String[] split = r.getNumeroDocumento().split("-");
-        int clienteId = Integer.parseInt(split[0]);
-        Cliente c = clienteRepository.findOne(clienteId);
+        int consumerId = Integer.parseInt(split[0]);
+        Consumer c = consumerRepository.findOne(consumerId);
         Titulo m = new Titulo();
-        m.setCliente(c);
+        m.setConsumer(c);
         m.setDataVencimento(r.getVencimento());
         m.setDesconto(r.getRegistroDetalhe().getDesconto());
         m.setModalidade(r.getModalidadeNossoNumero());

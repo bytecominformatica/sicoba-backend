@@ -7,7 +7,7 @@ import java.util.Date;
  */
 public class Carne {
 
-    Integer clienteId;
+    Integer consumerId;
     Integer modalidade;
     Integer boletoInicio;
     Integer boletoFim;
@@ -19,12 +19,12 @@ public class Carne {
         this.desconto = 0d;
     }
 
-    public Integer getClienteId() {
-        return clienteId;
+    public Integer getConsumerId() {
+        return consumerId;
     }
 
-    public void setClienteId(Integer clienteId) {
-        this.clienteId = clienteId;
+    public void setConsumerId(Integer consumerId) {
+        this.consumerId = consumerId;
     }
 
     public Integer getModalidade() {

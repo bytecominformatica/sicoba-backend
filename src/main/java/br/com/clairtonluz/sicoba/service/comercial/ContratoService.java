@@ -32,7 +32,7 @@ public class ContratoService {
     @Transactional
     public Contrato save(Contrato contrato) {
         Contrato save = contratoRepository.save(contrato);
-        Conexao conexao = conexaoService.buscarOptionalPorCliente(contrato.getCliente());
+        Conexao conexao = conexaoService.buscarOptionalPorConsumer(contrato.getConsumer());
         if (conexao != null) {
             conexaoService.save(conexao);
         }
@@ -45,8 +45,8 @@ public class ContratoService {
         contratoRepository.delete(c);
     }
 
-    public Contrato buscarPorCliente(Integer clienteId) {
-        return contratoRepository.findOptionalByCliente_id(clienteId);
+    public Contrato buscarPorConsumer(Integer consumerId) {
+        return contratoRepository.findOptionalByConsumer_id(consumerId);
     }
 
     public Contrato buscarPorEquipamento(Integer equipamentoId) {

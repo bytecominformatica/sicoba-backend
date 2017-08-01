@@ -1,7 +1,7 @@
 package br.com.clairtonluz.sicoba.model.entity.financeiro;
 
 
-import br.com.clairtonluz.sicoba.model.entity.comercial.Cliente;
+import br.com.clairtonluz.sicoba.model.entity.comercial.Consumer;
 import br.com.clairtonluz.sicoba.model.entity.extra.BaseEntity;
 
 import javax.persistence.*;
@@ -34,9 +34,9 @@ public class Titulo extends BaseEntity {
     @Column(name = "numero_boleto")
     private Integer numeroBoleto;
 
-    @JoinColumn(name = "cliente_id")
     @ManyToOne
-    private Cliente cliente;
+    @JoinColumn(name = "cliente_id")
+    private Consumer consumer;
 
     public Titulo() {
         status = StatusTitulo.PENDENTE;
@@ -67,12 +67,12 @@ public class Titulo extends BaseEntity {
         this.status = status;
     }
 
-    public Cliente getCliente() {
-        return cliente;
+    public Consumer getConsumer() {
+        return consumer;
     }
 
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
+    public void setConsumer(Consumer consumer) {
+        this.consumer = consumer;
     }
 
     public Integer getNumeroBoleto() {

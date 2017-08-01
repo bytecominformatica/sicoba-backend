@@ -1,14 +1,14 @@
 package br.com.clairtonluz.sicoba.service.financeiro.gerencianet.notification;
 
-import br.com.clairtonluz.sicoba.model.entity.comercial.Cliente;
-import br.com.clairtonluz.sicoba.model.entity.comercial.StatusCliente;
+import br.com.clairtonluz.sicoba.model.entity.comercial.Consumer;
+import br.com.clairtonluz.sicoba.model.entity.comercial.StatusConsumer;
 import br.com.clairtonluz.sicoba.model.entity.financeiro.gerencianet.carnet.Carnet;
 import br.com.clairtonluz.sicoba.model.entity.financeiro.gerencianet.carnet.StatusCarnet;
 import br.com.clairtonluz.sicoba.model.entity.financeiro.gerencianet.charge.Charge;
 import br.com.clairtonluz.sicoba.model.entity.financeiro.gerencianet.charge.StatusCharge;
 import br.com.clairtonluz.sicoba.repository.financeiro.gerencianet.CarnetRepository;
 import br.com.clairtonluz.sicoba.repository.financeiro.gerencianet.ChargeRepository;
-import br.com.clairtonluz.sicoba.service.comercial.ClienteService;
+import br.com.clairtonluz.sicoba.service.comercial.ConsumerService;
 import br.com.clairtonluz.sicoba.service.financeiro.gerencianet.GNService;
 import br.com.clairtonluz.sicoba.util.SendEmail;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,7 +34,7 @@ public class NotificationService {
     @Autowired
     private CarnetRepository carnetRepository;
     @Autowired
-    private ClienteService clienteService;
+    private ConsumerService consumerService;
 
     @Transactional
     public void processNotification(String token) {
@@ -80,26 +80,26 @@ public class NotificationService {
                 charge.setPaidValue(data.getDouble("value") / 100);
                 charge.setPaidAt(new Date());
 
-                Cliente cliente = charge.getCliente();
+                Consumer consumer = charge.getConsumer();
                 String messageVerify = charge.verifyPayment();
                 if (!messageVerify.equals(Charge.VALID_PAYMENT)) {
                     try {
-                        clienteService.inativar(cliente);
-                        String subject = String.format("Cliente %s bloqueado por pagamento inválido", cliente.getNome());
+                        consumerService.inativar(consumer);
+                        String subject = String.format("Consumer %s bloqueado por pagamento inválido", consumer.getName());
                         String chargeJson = new ObjectMapper().writeValueAsString(charge);
                         String message = String.format("Cobrana: %s\nMotivo:%s", chargeJson, messageVerify);
                         SendEmail.sendToAdmin(subject, message);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        String subject = String.format("Não foi possível bloquear o cliente %s por pagamento inválido do tipo:%s", cliente.getNome(), messageVerify);
+                        String subject = String.format("Não foi possível bloquear o consumer %s por pagamento inválido do tipo:%s", consumer.getName(), messageVerify);
                         SendEmail.notificarAdmin(subject, e);
                     }
-                } else if (cliente.getStatus().equals(StatusCliente.INATIVO)) {
+                } else if (consumer.getStatus().equals(StatusConsumer.INATIVO)) {
                     try {
-                        clienteService.ativar(cliente);
+                        consumerService.ativar(consumer);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        String subject = String.format("Não foi possível ativar o cliente %s", cliente.getNome());
+                        String subject = String.format("Não foi possível ativar o consumer %s", consumer.getName());
                         SendEmail.notificarAdmin(subject, e);
                     }
                 }

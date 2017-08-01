@@ -1,7 +1,7 @@
 package br.com.clairtonluz.sicoba.service.financeiro.gerencianet;
 
 import br.com.clairtonluz.sicoba.exception.ConflitException;
-import br.com.clairtonluz.sicoba.model.entity.comercial.Cliente;
+import br.com.clairtonluz.sicoba.model.entity.comercial.Consumer;
 import br.com.clairtonluz.sicoba.model.entity.comercial.Endereco;
 import br.com.clairtonluz.sicoba.model.entity.financeiro.gerencianet.Credentials;
 import br.com.clairtonluz.sicoba.model.entity.financeiro.gerencianet.carnet.Carnet;
@@ -67,9 +67,9 @@ public class GNService {
         return metadata;
     }
 
-    public static JSONObject createConsumer(Cliente cliente, boolean notificarClientePorEmail) {
+    public static JSONObject createConsumer(Consumer consumer, boolean notifyConsumerByEmail) {
         JSONObject customer = new JSONObject();
-        Endereco endereco = cliente.getEndereco();
+        Endereco endereco = consumer.getEndereco();
         if (endereco != null) {
             JSONObject customerAddres = new JSONObject();
             customerAddres.put("street", endereco.getLogradouro());
@@ -82,18 +82,18 @@ public class GNService {
             customer.put("address", customerAddres); // opcional
         }
 
-        if (StringUtil.isCnpj(cliente.getCpfCnpj())) {
+        if (StringUtil.isCnpj(consumer.getCpfCnpj())) {
             JSONObject juridicalPerson = new JSONObject();
-            juridicalPerson.put("corporate_name", cliente.getNome());
-            juridicalPerson.put("cnpj", cliente.getCpfCnpj());
+            juridicalPerson.put("corporate_name", consumer.getName());
+            juridicalPerson.put("cnpj", consumer.getCpfCnpj());
             customer.put("juridical_person", juridicalPerson);
         } else {
-            customer.put("name", cliente.getNome());
-            customer.put("cpf", cliente.getCpfCnpj());
+            customer.put("name", consumer.getName());
+            customer.put("cpf", consumer.getCpfCnpj());
         }
-        customer.put("phone_number", cliente.getFoneTitular());
-        if (notificarClientePorEmail && !StringUtil.isEmpty(cliente.getEmail())) {
-            customer.put("email", cliente.getEmail());
+        customer.put("phone_number", consumer.getFoneTitular());
+        if (notifyConsumerByEmail && !StringUtil.isEmpty(consumer.getEmail())) {
+            customer.put("email", consumer.getEmail());
         }
         return customer;
     }
